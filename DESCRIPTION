@@ -1,0 +1,12 @@
+Package: lhmixr
+Title: Fits Sex-Specific Life History Models With Missing Classifications
+Version: 0.0.0.9000
+Author: Coilin Minto, John Hinde, Rui Coelho
+Maintainer: Coilin Minto <coilin.minto@gmit.ie>
+Description: lhmixR fits sex-specific life-history models for fish and other taxa where some of the individuals have unknown sex.
+Depends: R (>= 3.2.3)
+License: GPL (>= 3)
+URL: https://github.com/mintoc/lhmixr
+LazyData: true
+Imports:
+    mgcv, segmented
