@@ -6,7 +6,7 @@
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
 #' @param abstol Tolerance for EM observed data log likelihood convergence (1e-9 default).
-#' @param plot.fit Logical, if TRUE fit plotted per iteration.
+#' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @return List containing the components:
 #' \item{logLik.vec}{Observed data log-likelihood at each iteration.}
@@ -37,6 +37,10 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   if(!"mixprop" %in% names(start.fit[["par"]])){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.fit list")
   }
+  ## check length of the starting parameters
+  if(max(binding) != length(start.fit[["par"]][["growth.par"]])){
+    stop("Mis-match in the length of growth.par and that specified by binding.")
+  }  
   ## observed log likelihood container
   ollike <- rep(NA, maxiter.em)
   ## if plotting set up some variables
@@ -49,6 +53,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   ## split the data 
   classified.data <- data[data$obs.sex %in% c("female", "male"), ]
   unclassified.data <- data[data$obs.sex == "immature", ]
+  ##  
   ## EM ITERATIONS 
   for(i in 1:maxiter.em){
     if(i==1){
@@ -102,6 +107,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     ## PLOT
     ##------
     if(plot.fit){
+      par(ask  = FALSE) ## so example runs through
       tau.col <- col.vec[cut(complete.data$tau, breaks)]
       par(mfrow=c(1, 1), mar = c(2, 2, 1, 1), oma = c(2, 2, 1, 1))
       age.pred <- seq(min(complete.data$jitter.age), max(complete.data$jitter.age), length=50)
@@ -122,7 +128,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     par[["mixprop"]] <- mixprop
     ## GROWTH MODELS
     complete.data$weights <- complete.data$tau
-    vb_fit <- optim(vb_bind_nll, par = growth.par, binding = binding, data = complete.data)
+    vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = "BFGS")
     par[["growth.par"]] <- vb_fit$par
     ##--------
     ## OUTPUT
@@ -196,6 +202,6 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose")])
+    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll")])
   }
 }

@@ -18,7 +18,7 @@ vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-09,
 
 \item{abstol}{Tolerance for EM observed data log likelihood convergence (1e-9 default).}
 
-\item{plot.fit}{Logical, if TRUE fit plotted per iteration.}
+\item{plot.fit}{Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.}
 
 \item{verbose}{Logical, if TRUE iteration and observed data log-likelihood printed.}
 }
