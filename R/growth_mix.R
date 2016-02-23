@@ -7,6 +7,7 @@
 #' @param abstol Tolerance for EM observed data log likelihood convergence (1e-9 default).
 #' @param plot.fit Logical, if TRUE fit plotted per iteration.
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
+#' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value. 
 #' @return List containing the components:
 #' \item{ollike}{Observed data log-likelihood at each iteration.}
 #' \item{complete_data}{Data frame of the data (re-ordered) with component probabilities (tau).}
@@ -35,7 +36,7 @@
 #' add.fit <- growth_mix(data = sim.dat, start.fit = start.fit)
 #'
 
-growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fit = TRUE, verbose = TRUE){
+growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fit = TRUE, verbose = TRUE, estimate.mixprop = TRUE){
   ## check mixprop starting values
   if(!"mixprop" %in% names(start.fit)){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.fit list")
@@ -115,7 +116,10 @@ growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fi
     ## M-STEP (UPDATE PARAMETERS) 
     ##--------
     ## Mixing proportion
-    mixprop <- sum(complete.data$tau)/length(complete.data$tau)
+    ## Mixing proportion
+    if(estimate.mixprop){
+      mixprop <- sum(complete.data$tau)/length(complete.data$tau)
+    }
     par[["mixprop"]] <- mixprop
     ## for segmented update also needs to happen on the inner linear model
     if(class(par[["female_growth_fit"]])[1] == "segmented"){
@@ -145,6 +149,6 @@ growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fi
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose")])
+    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "estimate.mixprop")])
   }
 }
