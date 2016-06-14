@@ -5,7 +5,7 @@
 \title{Fit finite mixture growth models.}
 \usage{
 growth_mix(start.fit, data, maxiter.em = 1000, abstol = 1e-09,
-  plot.fit = TRUE, verbose = TRUE)
+  plot.fit = TRUE, verbose = TRUE, estimate.mixprop = TRUE)
 }
 \arguments{
 \item{start.fit}{A list with starting models for (optionally): "female_growth_fit", "male_growth_fit", "mixprop".}
@@ -19,6 +19,8 @@ growth_mix(start.fit, data, maxiter.em = 1000, abstol = 1e-09,
 \item{plot.fit}{Logical, if TRUE fit plotted per iteration.}
 
 \item{verbose}{Logical, if TRUE iteration and observed data log-likelihood printed.}
+
+\item{estimate.mixprop}{Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.}
 }
 \value{
 List containing the components:

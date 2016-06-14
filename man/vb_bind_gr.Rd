@@ -4,7 +4,7 @@
 \alias{vb_bind_gr}
 \title{Gradient of the negative log-likelihood for potentially constrained von Bertalanffy growth model (typically used internally).}
 \usage{
-vb_bind_gr(theta, binding, data)
+vb_bind_gr(theta, binding, data, distribution)
 }
 \arguments{
 \item{theta}{A parameter vector of the same length as the maximum of \code{binding}. Unconstrained parameters take the order: lnlinfF, lnlinfM, lnkF, lnkM, lnnt0F, lnnt0M, lnsigmaF, lnsigmaM.}
@@ -12,6 +12,8 @@ vb_bind_gr(theta, binding, data)
 \item{binding}{A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).}
 
 \item{data}{A data.frame with columns: "age", "length" and "weights". "weights" are set to 1 or 0 for known females or males, respectively; proportions otherwise.}
+
+\item{distribution}{Character with options: "normal" or "lognormal"}
 }
 \value{
 Vector of parameter gradients:
@@ -25,6 +27,6 @@ start.par <- c(rep(log(25), 2), rep(log(0.2), 2), rep(log(3), 2), rep(log(1), 2)
 vb_bind_gr(theta = start.par, binding = binding, data = data.frame(age = rep(1, 2), length = rep(10, 2), weights = c(1, 0)))
 }
 \description{
-\code{vb_bind_gr} returns the parameter gradients of negative log-likelihood for the von Bertalanffy model. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
+\code{vb_bind_gr} returns the parameter gradients of negative log-likelihood for the von Bertalanffy model. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument.
 }
 

@@ -5,7 +5,8 @@
 \title{Fit finite mixture von Bertalanffy growth model.}
 \usage{
 vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-09,
-  plot.fit = TRUE, verbose = TRUE)
+  plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS",
+  estimate.mixprop = TRUE)
 }
 \arguments{
 \item{start.fit}{A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).}
@@ -21,6 +22,10 @@ vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-09,
 \item{plot.fit}{Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.}
 
 \item{verbose}{Logical, if TRUE iteration and observed data log-likelihood printed.}
+
+\item{optim.method}{Character, complete data optimisation method to use in \code{optim}.}
+
+\item{estimate.mixprop}{Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.}
 }
 \value{
 List containing the components:
