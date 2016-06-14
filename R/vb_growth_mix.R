@@ -95,16 +95,31 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     ## FILL IN OBSERVED LIKELIHOOD 
     ##-----------------------------
     ## NOTE: IF ONLY INCLUDING IMMATURE IN MIXPROP CALCULATION OMIT MIXPROP FROM CLASSIFIED
-    ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
-      sum(dnorm(classified.data$length, mean = muF.class, sd = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
+    if(distribution == "normal"){
+      ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
+        sum(dnorm(classified.data$length, mean = muF.class, sd = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
+      ##
+      ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
+        sum(dnorm(classified.data$length, mean = muM.class, sd = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
+      ## unclassified component - finite mixture density
+      ll.miss <- sum(log(
+                       mixprop * dnorm(unclassified.data$length, mean = muF.unclass, sd = sigmaF) +
+                       (1-mixprop) * dnorm(unclassified.data$length, mean = muM.unclass, sd = sigmaM)))
+    }
+    if(distribution == "lognormal"){
+      ## female classified
+      ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
+        sum(dlnorm(classified.data$length, meanlog = log(muF.class) - sigmaF^2 / 2, sdlog = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
+      ## male classified
+      ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
+        sum(dlnorm(classified.data$length, meanlog = log(muM.class) - sigmaM^2 / 2, sdlog = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
+      ## unclassified component - finite mixture density
+      ll.miss <- sum(log(
+                       mixprop * dlnorm(unclassified.data$length, meanlog = log(muF.unclass) - sigmaF^2 / 2, sdlog = sigmaF) +
+                       (1-mixprop) * dlnorm(unclassified.data$length, meanlog = log(muM.unclass) - sigmaM^2 / 2, sdlog = sigmaM)))
+    }
     ##
-    ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
-      sum(dnorm(classified.data$length, mean = muM.class, sd = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
-    ## unclassified component - finite mixture density
-    ll.miss <- sum(log(
-                     mixprop * dnorm(unclassified.data$length, mean = muF.unclass, sd = sigmaF) +
-                     (1-mixprop) * dnorm(unclassified.data$length, mean = muM.unclass, sd = sigmaM)))
-    ##
+    print(c(ll.F.class, ll.M.class, ll.miss))
     ollike[i] <- ll.F.class + ll.M.class + ll.miss
     ##------
     ## PLOT
