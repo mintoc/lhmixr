@@ -9,7 +9,8 @@
 #' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param optim.method Character, complete data optimisation method to use in \code{optim}.
-#' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value. 
+#' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.
+#' @param distribution Character with options: "normal" or "lognormal".
 #' @return List containing the components:
 #' \item{logLik.vec}{Observed data log-likelihood at each iteration.}
 #' \item{logLik}{Observed data log-likelihood on the last EM iteration.}
@@ -32,9 +33,9 @@
 #' ## starting values 
 #' start.par <- c(rep(log(25), 2), rep(log(0.2), 1), rep(log(3), 2), rep(log(1), 2))
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
-#' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list, binding = binding)
+#' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list, binding = binding, distribution = "lognormal")
 
-vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1e-9, plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE){
+vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1e-9, plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
   if(!"mixprop" %in% names(start.fit[["par"]])){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.fit list")
@@ -43,7 +44,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   if(max(binding) != length(start.fit[["par"]][["growth.par"]])){
     stop("Mis-match in the length of growth.par and that specified by binding.")
   }  
-  ## observed log likelihood container
+  ## observed log-likelihood container
   ollike <- rep(NA, maxiter.em)
   ## if plotting set up some variables
   if(plot.fit){
@@ -87,7 +88,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     ## classified data (known)
     classified.data$tau <- ifelse(classified.data$obs.sex == "female", 1, ifelse(classified.data$obs.sex == "male", 0, NA))
     ## classification for unclassified data (missing)
-    unclassified.data$tau <- get_growth_post_prob(mixprop = mixprop, muF = muF.unclass, muM = muM.unclass, sigmaF = sigmaF, sigmaM = sigmaM, data = unclassified.data)
+    unclassified.data$tau <- get_growth_post_prob(mixprop = mixprop, muF = muF.unclass, muM = muM.unclass, sigmaF = sigmaF, sigmaM = sigmaM, data = unclassified.data, distribution = distribution)
     ## make the complete data
     complete.data <- rbind(classified.data, unclassified.data)
     ##-----------------------------
@@ -132,7 +133,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     par[["mixprop"]] <- mixprop
     ## GROWTH MODELS
     complete.data$weights <- complete.data$tau
-    vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = optim.method)
+    vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = optim.method, distribution = distribution)
     par[["growth.par"]] <- vb_fit$par
     ##--------
     ## OUTPUT
@@ -166,20 +167,35 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
           ## classified 
           muF.class <- linfF * (1 - exp(-kF * (classified.data$age - t0F))) ##female_growth_fit(unclassified.data$age)
           muM.class <- linfM * (1 - exp(-kM * (classified.data$age - t0M))) ##male_growth_fit(unclassified.data$age)
-          ## female classified
-          ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
-            sum(dnorm(classified.data$length, mean = muF.class, sd = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
-          ## male classified
-          ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
-            sum(dnorm(classified.data$length, mean = muM.class, sd = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
-          ## unclassified component - finite mixture density
-          ll.miss <- sum(log(
-                           mixprop * dnorm(unclassified.data$length, mean = muF.unclass, sd = sigmaF) +
-                           (1-mixprop) * dnorm(unclassified.data$length, mean = muM.unclass, sd = sigmaM)))
+          if(distribution == "normal"){
+            ## female classified
+            ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
+              sum(dnorm(classified.data$length, mean = muF.class, sd = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
+            ## male classified
+            ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
+              sum(dnorm(classified.data$length, mean = muM.class, sd = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
+            ## unclassified component - finite mixture density
+            ll.miss <- sum(log(
+                             mixprop * dnorm(unclassified.data$length, mean = muF.unclass, sd = sigmaF) +
+                             (1-mixprop) * dnorm(unclassified.data$length, mean = muM.unclass, sd = sigmaM)))
+          }
+          if(distribution == "lognormal"){
+            ## female classified
+            ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
+              sum(dlnorm(classified.data$length, meanlog = log(muF.class) - sigmaF^2 / 2, sdlog = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
+            ## male classified
+            ll.M.class <- sum(classified.data$obs.sex == "male") * log(1 - mixprop) +
+              sum(dlnorm(classified.data$length, meanlog = log(muM.class) - sigmaM^2 / 2, sdlog = sigmaM, log=TRUE)[classified.data$obs.sex == "male"])
+            ## unclassified component - finite mixture density
+            ll.miss <- sum(log(
+                             mixprop * dlnorm(unclassified.data$length, meanlog = log(muF.unclass) - sigmaF^2 / 2, sdlog = sigmaF) +
+                             (1-mixprop) * dlnorm(unclassified.data$length, meanlog = log(muM.unclass) - sigmaM^2 / 2, sdlog = sigmaM)))
+          }
           ##
           oll <- ll.F.class + ll.M.class + ll.miss
           return(-oll)
         }
+        ## INCLUDE GRADIENTS HERE ALSO
         if(estimate.mixprop){
           oll.fit <- optim(fn = oll, par = c(growth.par, qlogis(mixprop)), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = TRUE)
         }else{
@@ -214,6 +230,6 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "optim.method", "estimate.mixprop")])
+    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "optim.method", "estimate.mixprop", "distribution")])
   }
 }
