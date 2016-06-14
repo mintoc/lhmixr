@@ -63,7 +63,7 @@ vb_bind_gr <- function(theta, binding, data, distribution){
                        ## d/dlnnt0M
                        sum(-exp(-2*lnsigmaM)*(1-weights)*exp(-exp(lnkM)*(age+exp(lnnt0M))+lnnt0M+lnkM)*(log(length)-log(exp(lnlinfM)*(1-exp(-exp(lnkM)*(age+exp(lnnt0M)))))+exp(2*lnsigmaM)/2)/(1-exp(-exp(lnkM)*(age+exp(lnnt0M))))),
                        ## d/dlnsigmaF
-                       sum(-weights*(exp(-2*lnsigmaF)*(log(length)-log(exp(lnlinfF)*(1-exp(-exp(lnkF)*(x+exp(lnnt0F)))))+exp(2*lnsigmaF)/2)^2-log(length)+log(exp(lnlinfF)*(1-exp(-exp(lnkF)*(age+exp(lnnt0F)))))-exp(2*lnsigmaF)/2-1)),
+                       sum(-weights*(exp(-2*lnsigmaF)*(log(length)-log(exp(lnlinfF)*(1-exp(-exp(lnkF)*(age+exp(lnnt0F)))))+exp(2*lnsigmaF)/2)^2-log(length)+log(exp(lnlinfF)*(1-exp(-exp(lnkF)*(age+exp(lnnt0F)))))-exp(2*lnsigmaF)/2-1)),
                        ## d/dlnsigmaM
                        sum(-(1-weights)*(exp(-2*lnsigmaM)*(log(length)-log(exp(lnlinfM)*(1-exp(-exp(lnkM)*(age+exp(lnnt0M)))))+exp(2*lnsigmaM)/2)^2-log(length)+log(exp(lnlinfM)*(1-exp(-exp(lnkM)*(age+exp(lnnt0M)))))-exp(2*lnsigmaM)/2-1))
                        )
