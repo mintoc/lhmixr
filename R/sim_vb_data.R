@@ -11,6 +11,7 @@
 #' @param mat_parF Named ("A50", "MR") numeric vector with female maturation parameters
 #' A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.  
 #' @param mat_parM Named ("A50", "MR") numeric vector with male maturation parameters.
+#' @param distribution Character with options: "normal" or "lognormal".
 #' @return data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals unclassified), "maturiy" (binary: 1 if mature; 0 if immature).
 #' @examples
 #' sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
@@ -23,16 +24,24 @@
 #'      col = c("red", "blue", "grey")[match(sim.dat$obs.sex,c("female", "male", "immature"))],
 #'      pch = 19, xlab="age", ylab="Length")
 
-sim_vb_data<-function(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM, mat_parF, mat_parM){
+sim_vb_data<-function(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM, mat_parF, mat_parM, distribution){
   ## female ages
   age.vecF<-rpois(nfemale, lambda = mean_ageF)
   ## male ages
   age.vecM<-rpois(nmale, lambda = mean_ageM)
   age.vec<-c(age.vecF, age.vecM)
-  ## female lengths
-  length.vecF<-rnorm(nfemale, mean = vb_lengths(theta = growth_parF, age = age.vecF), sd = growth_parF["sigma"])
-  ## male lengths
-  length.vecM<-rnorm(nmale, mean = vb_lengths(theta = growth_parM, age = age.vecM), sd = growth_parM["sigma"])
+  if(distribution == "normal"){
+    ## female lengths
+    length.vecF<-rnorm(nfemale, mean = vb_lengths(theta = growth_parF, age = age.vecF), sd = growth_parF["sigma"])
+    ## male lengths
+    length.vecM<-rnorm(nmale, mean = vb_lengths(theta = growth_parM, age = age.vecM), sd = growth_parM["sigma"])
+  }
+  if(distribution == "lognormal"){
+    ## female lengths
+    length.vecF<-rlnorm(nfemale, meanlog = log(vb_lengths(theta = growth_parF, age = age.vecF)) - growth_parF["sigma"]^2 / 2, sdlog = growth_parF["sigma"])
+    ## male lengths
+    length.vecM<-rlnorm(nmale, meanlog = log(vb_lengths(theta = growth_parM, age = age.vecM)) - growth_parM["sigma"]^2 / 2, sdlog = growth_parM["sigma"])
+  }
   length.vec<-c(length.vecF, length.vecM)
   ## female maturity 
   matF<-rbinom(nfemale, size = 1, prob = plogis(2*log(3)/mat_parF["MR"]*(age.vecF-mat_parF["A50"])))
