@@ -131,7 +131,9 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       age.pred <- seq(min(complete.data$jitter.age), max(complete.data$jitter.age), length=50)
       plot(complete.data$jitter.age, complete.data$length,
            pch=ifelse(complete.data$obs.sex=="immature",17, 19),
-           col=paste(tau.col,40, sep=""), ylim=c(0, max(complete.data$length)),
+           col=paste(tau.col,40, sep=""),
+           ylim=c(0, max(complete.data$length)),
+           xlim=c(0, max(complete.data$jitter.age)),
            xlab="", ylab="")
       ##
       lines(age.pred, female_growth_fit(age.pred), col = "red")
