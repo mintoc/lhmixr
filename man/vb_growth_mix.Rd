@@ -6,7 +6,7 @@
 \usage{
 vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-09,
   plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS",
-  estimate.mixprop = TRUE)
+  estimate.mixprop = TRUE, distribution)
 }
 \arguments{
 \item{start.fit}{A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).}
@@ -26,6 +26,8 @@ vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-09,
 \item{optim.method}{Character, complete data optimisation method to use in \code{optim}.}
 
 \item{estimate.mixprop}{Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.}
+
+\item{distribution}{Character with options: "normal" or "lognormal".}
 }
 \value{
 List containing the components:
@@ -42,9 +44,10 @@ List containing the components:
 \examples{
 set.seed(1010)
 sim.dat <- sim_vb_data(nfemale = 50, nmale = 50, mean_ageF = 4, mean_ageM = 4,
-                      growth_parF = c(linf = 30, k = 0.5, t0 = -1, sigma = 1),
-                      growth_parM = c(linf = 25, k = 0.5, t0 = -1, sigma = 1),
-                      mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2))
+                      growth_parF = c(linf = 30, k = 0.5, t0 = -1, sigma = 0.1),
+                      growth_parM = c(linf = 25, k = 0.5, t0 = -1, sigma = 0.1),
+                      mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2),
+                      distribution = "lognormal")
 
 ## Model fit with contrained Brody's growth coefficient
 ## Set up the constraint
@@ -54,6 +57,10 @@ colnames(binding) <- c("female", "male")
 ## starting values
 start.par <- c(rep(log(25), 2), rep(log(0.2), 1), rep(log(3), 2), rep(log(1), 2))
 start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
-vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list, binding = binding)
+## Don't ask for each iteration plot
+options(device.ask.default = FALSE)
+vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list,
+                             binding = binding, distribution = "lognormal")
+options(device.ask.default = TRUE)
 }
 

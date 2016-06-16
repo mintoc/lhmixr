@@ -4,7 +4,7 @@
 \alias{get_growth_post_prob}
 \title{Posterior probability of sex being female based on growth alone}
 \usage{
-get_growth_post_prob(mixprop, muF, muM, sigmaF, sigmaM, data)
+get_growth_post_prob(mixprop, muF, muM, sigmaF, sigmaM, data, distribution)
 }
 \arguments{
 \item{mixprop}{Numeric scalar of mixing proportion (overall sex ratio)}
@@ -18,6 +18,8 @@ get_growth_post_prob(mixprop, muF, muM, sigmaF, sigmaM, data)
 \item{sigmaM}{Numeric scalar for male residual standard deviation}
 
 \item{data}{A data.frame with column "length". Note predicted means "muF" and "muM" must come from corresponding ages.}
+
+\item{distribution}{Character with options: "normal" or "lognormal".}
 }
 \value{
 Numeric vector of the posterior probability of being female.
@@ -30,6 +32,6 @@ given by Bayes' theorem. Used internally.
 }
 \examples{
 get_growth_post_prob(mixprop=0.5, muF=4, muM=6, sigmaF=1,
-                          sigmaM=1, data=data.frame(length=4.5))
+                          sigmaM=1, data=data.frame(length=4.5), distribution = "normal")
 }
 

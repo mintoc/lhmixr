@@ -5,7 +5,7 @@
 \title{Simulate sex-specific von Bertalanffy data with missing classifications.}
 \usage{
 sim_vb_data(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM,
-  mat_parF, mat_parM)
+  mat_parF, mat_parM, distribution)
 }
 \arguments{
 \item{nfemale}{Numeric scalar for number of female observations.}
@@ -24,6 +24,8 @@ sim_vb_data(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM,
 A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.}
 
 \item{mat_parM}{Named ("A50", "MR") numeric vector with male maturation parameters.}
+
+\item{distribution}{Character with options: "normal" or "lognormal".}
 }
 \value{
 data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals unclassified), "maturiy" (binary: 1 if mature; 0 if immature).

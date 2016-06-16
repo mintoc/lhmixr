@@ -4,7 +4,7 @@
 #' @param start.fit A list with starting models for (optionally): "female_growth_fit", "male_growth_fit", "mixprop".
 #' @param data A data.frame with columns: "age", "length" (for growth) and "obs.sex". "obs.sex" must have values "female", "male", "immature". 
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
-#' @param abstol Tolerance for EM observed data log likelihood convergence (1e-9 default).
+#' @param abstol Tolerance for EM observed data log likelihood convergence (1e-8 default).
 #' @param plot.fit Logical, if TRUE fit plotted per iteration.
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value. 
@@ -19,11 +19,13 @@
 #' sim.dat <- sim_vb_data(nfemale = 50, nmale = 50, mean_ageF = 4, mean_ageM = 4,
 #'                       growth_parF = c(linf = 30, k = 0.5, t0 = -1, sigma = 1),
 #'                       growth_parM = c(linf = 25, k = 0.5, t0 = -1, sigma = 1),
-#'                       mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2))
+#'                       mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2),
+#'                       distribution = "normal")
 #' 
 #' ## set weights to one initially
 #' sim.dat$weights <- 1
-#' 
+#' ## Don't ask for each iteration plot
+#' options(device.ask.default = FALSE)
 #' ## Additive growth model fit
 #' start.fit<-list(
 #'             female_growth_fit = mgcv::gam(length ~ s(age, k=5),
@@ -34,9 +36,9 @@
 #'             )
 #'
 #' add.fit <- growth_mix(data = sim.dat, start.fit = start.fit)
-#'
+#' options(device.ask.default = TRUE)
 
-growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fit = TRUE, verbose = TRUE, estimate.mixprop = TRUE){
+growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-8, plot.fit = TRUE, verbose = TRUE, estimate.mixprop = TRUE){
   ## check mixprop starting values
   if(!"mixprop" %in% names(start.fit)){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.fit list")
@@ -78,7 +80,7 @@ growth_mix <- function(start.fit, data, maxiter.em = 1e3, abstol = 1e-9, plot.fi
     ## classified data (known)
     classified.data$tau <- ifelse(classified.data$obs.sex == "female", 1, ifelse(classified.data$obs.sex == "male", 0, NA))
     ## classification for unclassified data (missing)
-    unclassified.data$tau <- get_growth_post_prob(mixprop = mixprop, muF = muF.unclass, muM = muM.unclass, sigmaF = sigmaF, sigmaM = sigmaM, data = unclassified.data)
+    unclassified.data$tau <- get_growth_post_prob(mixprop = mixprop, muF = muF.unclass, muM = muM.unclass, sigmaF = sigmaF, sigmaM = sigmaM, data = unclassified.data, distribution = "normal")
     ## make the complete data
     complete.data <- rbind(classified.data, unclassified.data)
     ##-----------------------------

@@ -13,7 +13,7 @@ vb_bind_gr(theta, binding, data, distribution)
 
 \item{data}{A data.frame with columns: "age", "length" and "weights". "weights" are set to 1 or 0 for known females or males, respectively; proportions otherwise.}
 
-\item{distribution}{Character with options: "normal" or "lognormal"}
+\item{distribution}{Character with options: "normal" or "lognormal".}
 }
 \value{
 Vector of parameter gradients:

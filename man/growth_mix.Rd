@@ -38,11 +38,13 @@ set.seed(1010)
 sim.dat <- sim_vb_data(nfemale = 50, nmale = 50, mean_ageF = 4, mean_ageM = 4,
                       growth_parF = c(linf = 30, k = 0.5, t0 = -1, sigma = 1),
                       growth_parM = c(linf = 25, k = 0.5, t0 = -1, sigma = 1),
-                      mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2))
+                      mat_parF = c(A50 = 5, MR = 2), mat_parM = c(A50 = 3, MR = 2),
+                      distribution = "normal")
 
 ## set weights to one initially
 sim.dat$weights <- 1
-
+## Don't ask for each iteration plot
+options(device.ask.default = FALSE)
 ## Additive growth model fit
 start.fit<-list(
             female_growth_fit = mgcv::gam(length ~ s(age, k=5),
@@ -53,5 +55,6 @@ start.fit<-list(
             )
 
 add.fit <- growth_mix(data = sim.dat, start.fit = start.fit)
+options(device.ask.default = TRUE)
 }
 
