@@ -68,5 +68,7 @@ vb_bind_gr <- function(theta, binding, data, distribution){
                        sum(-(1-weights)*(exp(-2*lnsigmaM)*(log(length)-log(exp(lnlinfM)*(1-exp(-exp(lnkM)*(age+exp(lnnt0M)))))+exp(2*lnsigmaM)/2)^2-log(length)+log(exp(lnlinfM)*(1-exp(-exp(lnkM)*(age+exp(lnnt0M)))))-exp(2*lnsigmaM)/2-1))
                        )
   }
-  return(all.gradients[sort(unique(c(binding)))])
+  ## gradients should be summed across bound parameters
+  ##return(all.gradients[sort(unique(c(binding)))])
+  return(tapply(all.gradients, c(t(binding)), sum))
 }

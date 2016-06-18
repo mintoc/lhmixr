@@ -49,7 +49,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   ## check length of the starting parameters
   if(max(binding) != length(start.fit[["par"]][["growth.par"]])){
     stop("Mis-match in the length of growth.par and that specified by binding.")
-  }  
+  }
   ## observed log-likelihood container
   ollike <- rep(NA, maxiter.em)
   ## if plotting set up some variables
@@ -62,7 +62,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   ## split the data 
   classified.data <- data[data$obs.sex %in% c("female", "male"), ]
   unclassified.data <- data[data$obs.sex == "immature", ]
-  ##  
+  ##
   ## EM ITERATIONS 
   for(i in 1:maxiter.em){
     if(i==1){
@@ -125,7 +125,6 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
                        (1-mixprop) * dlnorm(unclassified.data$length, meanlog = log(muM.unclass) - sigmaM^2 / 2, sdlog = sigmaM)))
     }
     ##
-    print(c(ll.F.class, ll.M.class, ll.miss))
     ollike[i] <- ll.F.class + ll.M.class + ll.miss
     ##------
     ## PLOT
@@ -154,7 +153,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       mixprop <- sum(complete.data$tau)/length(complete.data$tau)
     }
     par[["mixprop"]] <- mixprop
-    ## GROWTH MODELS
+    ## GROWTH MODEL
     complete.data$weights <- complete.data$tau
     vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = optim.method, distribution = distribution)
     par[["growth.par"]] <- vb_fit$par
@@ -220,10 +219,11 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
         }
         ## INCLUDE GRADIENTS HERE ALSO
         if(estimate.mixprop){
-          oll.fit <- optim(fn = oll, par = c(growth.par, qlogis(mixprop)), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = TRUE, distribution = distribution)
+          oll.fit <- optim(fn = oll, par = c(par[["growth.par"]], qlogis(mixprop)), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = TRUE, distribution = distribution, method = optim.method)
         }else{
-          oll.fit <- optim(fn = oll, par = c(growth.par), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = FALSE, distribution = distribution)
+          oll.fit <- optim(fn = oll, par = c(par[["growth.par"]]), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = FALSE, distribution = distribution, method = optim.method)
         }
+        print(oll.fit$par)
         ## check to make sure final optim fit close to EM
         if(!(round(-oll.fit$value / ollike[i], 4) == 1)){
           warning(paste("EM solution and optim solution differ by ", -oll.fit$value - ollike[i], ", final parameter values may differ from final EM values.", sep = ""))
