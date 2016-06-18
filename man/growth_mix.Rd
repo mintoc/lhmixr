@@ -4,7 +4,7 @@
 \alias{growth_mix}
 \title{Fit finite mixture growth models.}
 \usage{
-growth_mix(start.fit, data, maxiter.em = 1000, abstol = 1e-09,
+growth_mix(start.fit, data, maxiter.em = 1000, abstol = 1e-08,
   plot.fit = TRUE, verbose = TRUE, estimate.mixprop = TRUE)
 }
 \arguments{
@@ -14,7 +14,7 @@ growth_mix(start.fit, data, maxiter.em = 1000, abstol = 1e-09,
 
 \item{maxiter.em}{Integer for maximum number of EM iterations (1e3 default).}
 
-\item{abstol}{Tolerance for EM observed data log likelihood convergence (1e-9 default).}
+\item{abstol}{Tolerance for EM observed data log likelihood convergence (1e-8 default).}
 
 \item{plot.fit}{Logical, if TRUE fit plotted per iteration.}
 

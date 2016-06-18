@@ -32,12 +32,13 @@
 #' rownames(binding) <- c("lnlinf", "lnk", "lnnt0", "lnsigma")
 #' colnames(binding) <- c("female", "male")
 #' ## starting values 
-#' start.par <- c(c(log(25), log(20)), rep(log(0.2), 1), rep(log(1), 2), rep(log(.1), 2))
+#' start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1), 2))
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
 #' ## Don't ask for each iteration plot
 #' options(device.ask.default = FALSE)
 #' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list,
-#'                              binding = binding, distribution = "lognormal")
+#'                              binding = binding, distribution = "lognormal",
+#'                              abstol = 1e-6)
 #' options(device.ask.default = TRUE)
 #'
 
