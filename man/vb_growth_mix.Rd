@@ -4,12 +4,12 @@
 \alias{vb_growth_mix}
 \title{Fit finite mixture von Bertalanffy growth model.}
 \usage{
-vb_growth_mix(start.fit, data, binding, maxiter.em = 1000, abstol = 1e-08,
+vb_growth_mix(start.list, data, binding, maxiter.em = 1000, abstol = 1e-08,
   plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS",
   estimate.mixprop = TRUE, distribution)
 }
 \arguments{
-\item{start.fit}{A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).}
+\item{start.list}{A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).}
 
 \item{data}{A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "immature".}
 
@@ -59,7 +59,7 @@ start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1
 start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
 ## Don't ask for each iteration plot
 options(device.ask.default = FALSE)
-vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list,
+vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
                              binding = binding, distribution = "lognormal",
                              abstol = 1e-6)
 options(device.ask.default = TRUE)

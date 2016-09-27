@@ -1,7 +1,7 @@
 #' @title Fit finite mixture von Bertalanffy growth model.
 #'
 #' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimization is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
-#' @param start.fit A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
+#' @param start.list A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
 #' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "immature".
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
@@ -36,19 +36,19 @@
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
 #' ## Don't ask for each iteration plot
 #' options(device.ask.default = FALSE)
-#' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.fit = start.list,
+#' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
 #'                              binding = binding, distribution = "lognormal",
 #'                              abstol = 1e-6)
 #' options(device.ask.default = TRUE)
 #'
 
-vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
+vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
-  if(!"mixprop" %in% names(start.fit[["par"]])){
-    stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.fit list")
+  if(!"mixprop" %in% names(start.list[["par"]])){
+    stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.list list")
   }
   ## check length of the starting parameters
-  if(max(binding) != length(start.fit[["par"]][["growth.par"]])){
+  if(max(binding) != length(start.list[["par"]][["growth.par"]])){
     stop("Mis-match in the length of growth.par and that specified by binding.")
   }
   ## observed log-likelihood container
@@ -63,7 +63,9 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
   ## split the data 
   classified.data <- data[data$obs.sex %in% c("female", "male"), ]
   unclassified.data <- data[data$obs.sex == "immature", ]
-  ##
+  ## define growth functions
+  female_growth_fit <- function(x){linfF * (1 - exp(-kF * (x - t0F)))}
+  male_growth_fit <- function(x){linfM * (1 - exp(-kM * (x - t0M)))}
   ## EM ITERATIONS 
   for(i in 1:maxiter.em){
     if(i==1){
@@ -83,8 +85,6 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     sigmaM <- exp(growth.par[binding["lnsigma", "male"]])    
     ## MIXING PROPORTION
     mixprop <- par[["mixprop"]]
-    female_growth_fit <- function(x){linfF * (1 - exp(-kF * (x - t0F)))}
-    male_growth_fit <- function(x){linfM * (1 - exp(-kM * (x - t0M)))}
     ## unclassified means
     muF.unclass <- female_growth_fit(unclassified.data$age)
     muM.unclass <- male_growth_fit(unclassified.data$age)
@@ -131,7 +131,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
     ## PLOT
     ##------
     if(plot.fit){
-      par(ask  = FALSE) ## so example runs through
+      ##par(ask  = FALSE) ## so example runs through
       tau.col <- col.vec[cut(complete.data$tau, breaks)]
       par(mfrow=c(1, 1), mar = c(2, 2, 1, 1), oma = c(2, 2, 1, 1))
       age.pred <- seq(min(complete.data$jitter.age), max(complete.data$jitter.age), length=50)
@@ -154,9 +154,10 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       mixprop <- sum(complete.data$tau)/length(complete.data$tau)
     }
     par[["mixprop"]] <- mixprop
-    ## GROWTH MODEL
+    ## GROWTH MODEL - USE NLMINB AS BFGS FLIPPING OUT OCCASSIONALLY, SEEMS FASTER ALSO
     complete.data$weights <- complete.data$tau
     vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = optim.method, distribution = distribution)
+    ##vb_fit <- nlminb(objective = vb_bind_nll, start = growth.par, gradient = vb_bind_gr, binding = binding, data = complete.data, distribution = distribution)
     par[["growth.par"]] <- vb_fit$par
     ##--------
     ## OUTPUT
@@ -224,7 +225,7 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
         }else{
           oll.fit <- optim(fn = oll, par = c(par[["growth.par"]]), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = FALSE, distribution = distribution, method = optim.method)
         }
-        print(oll.fit$par)
+        ##print(oll.fit$par)
         ## check to make sure final optim fit close to EM
         if(!(round(-oll.fit$value / ollike[i], 4) == 1)){
           warning(paste("EM solution and optim solution differ by ", -oll.fit$value - ollike[i], ", final parameter values may differ from final EM values.", sep = ""))
@@ -254,6 +255,6 @@ vb_growth_mix <- function(start.fit, data, binding, maxiter.em = 1e3, abstol = 1
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "optim.method", "estimate.mixprop", "distribution")])
+    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "binding", "optim.method", "estimate.mixprop", "distribution", "female_growth_fit", "male_growth_fit")])
   }
 }

@@ -12,9 +12,9 @@ sim_vb_data(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM,
 
 \item{nmale}{Numeric scalar for number of male observations.}
 
-\item{mean_ageF}{Numeric scalar for female mean age - used to generate ages from rpois(,lambda=mean_ageF)}
+\item{mean_ageF}{Numeric scalar for female mean age - used to generate ages from rnbinom(,mu = mean_ageF)}
 
-\item{mean_ageM}{Numeric scalar for male mean age - used to generate ages from rpois(,lambda=mean_ageM)}
+\item{mean_ageM}{Numeric scalar for male mean age - used to generate ages from rnbinom(, mu = mean_ageM)}
 
 \item{growth_parF}{Named ("linf", "k", "t0", "sigma") numeric vector with female growth parameters}
 
@@ -36,9 +36,10 @@ the von Bertalanffy growth model and a logistic model governing maturity.
 }
 \examples{
 sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
-                     growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 1),
-                     growth_parM = c(linf = 25, k = 0.2, t0 = -1, sigma = 1),
-                     mat_parF = c(A50 = 3, MR = 1), mat_parM = c(A50 = 2, MR = 1))
+                     growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 0.1),
+                     growth_parM = c(linf = 25, k = 0.2, t0 = -1, sigma = 0.1),
+                     mat_parF = c(A50 = 3, MR = 1), mat_parM = c(A50 = 2, MR = 1),
+                     distribution = "lognormal")
 
 plot(jitter(sim.dat$age), sim.dat$length,
      xlim=c(0, max(sim.dat$age)), ylim=c(0, max(sim.dat$length)),
