@@ -5,7 +5,7 @@
 \title{Fit finite mixture von Bertalanffy growth model.}
 \usage{
 vb_growth_mix(start.list, data, binding, maxiter.em = 1000, abstol = 1e-08,
-  plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS",
+  plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS",
   estimate.mixprop = TRUE, distribution)
 }
 \arguments{
@@ -19,7 +19,7 @@ vb_growth_mix(start.list, data, binding, maxiter.em = 1000, abstol = 1e-08,
 
 \item{abstol}{Tolerance for EM observed data log likelihood convergence (1e-8 default).}
 
-\item{plot.fit}{Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.}
+\item{plot.fit}{Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).}
 
 \item{verbose}{Logical, if TRUE iteration and observed data log-likelihood printed.}
 
@@ -57,11 +57,8 @@ colnames(binding) <- c("female", "male")
 ## starting values
 start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1), 2))
 start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
-## Don't ask for each iteration plot
-options(device.ask.default = FALSE)
 vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
                              binding = binding, distribution = "lognormal",
                              abstol = 1e-6)
-options(device.ask.default = TRUE)
 }
 
