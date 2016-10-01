@@ -37,7 +37,6 @@
 #' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
 #'                              binding = binding, distribution = "lognormal",
 #'                              abstol = 1e-6)
-#' options(device.ask.default = TRUE)
 #'
 
 vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
