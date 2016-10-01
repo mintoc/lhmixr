@@ -1,22 +1,36 @@
-#' Etmopterus spinax
+#' Etmopterus spinax data
 #'
-#' Growth data for the deepwater velvetbelly shark \emph{Etmopterus spinax}.
+#' Growth data for deepwater velvet belly lantern shark \emph{Etmopterus spinax} from Coelho and Erzini (2008). Data are cross-sectional with one observation (row) per individual.
 #'
-#' @format A data frame with nine variables:
+#' @format A data frame with five variables:
 #' \describe{
-#' \item{\code{x}}{age in years}
-#' \item{\code{qx}}{probability of death at age \code{x}}
-#' \item{\code{lx}}{number of survivors, of birth cohort of 100,000, at next integral age}
-#' \item{\code{dx}}{number of deaths that would occur between integral ages}
-#' \item{\code{Lx}}{Number of person-years lived between \code{x} and \code{x+1}}
-#' \item{\code{Tx}}{Total number of person-years lived beyond age \code{x}}
-#' \item{\code{ex}}{Average number of years of life remaining for members of cohort alive at age \code{x}}
-#' \item{\code{sex}}{Sex}
-#' \item{\code{year}}{Year}
+#' \item{\code{species}}{Full species name}
+#' \item{\code{sex}}{Sex of the animal: Female (\code{F}) or Male (\code{M})}
+#' \item{\code{age}}{Age in years}
+#' \item{\code{length}}{Total length in centimetres}
+#' \item{\code{maturity}}{Maturation status: \code{immature} or \code{mature}}
 #' }
 #'
-#' @source Coelho, R. & Erzini, K. (2008) Life history of a wide-ranging deepwater lantern shark in the
+#' @source Coelho, R. and Erzini, K. (2008). Life history of a wide-ranging deepwater lantern shark in the
 #' north-east Atlantic, \emph{Etmopterus spinax} (chondrichthyes: Etmopteridae), with implications for
 #' conservation. \emph{Journal of Fish Biology}, 73, 1419--1443.
 #'
 "Espinax"
+
+#' Etmopterus pusillus data
+#'
+#' Growth data for deepwater smooth lantern shark \emph{Etmopterus pusillus} from Coelho and Erzini (2007). Data are cross-sectional with one observation (row) per individual.
+#'
+#' @format A data frame with five variables:
+#' \describe{
+#' \item{\code{species}}{Full species name}
+#' \item{\code{sex}}{Sex of the animal: Female (\code{F}) or Male (\code{M})}
+#' \item{\code{age}}{Age in years}
+#' \item{\code{length}}{Total length in centimetres}
+#' \item{\code{maturity}}{Maturation status: \code{immature} or \code{mature}}
+#' }
+#'
+#' @source Coelho, R. & Erzini, K. (2007). Population parameters of the smooth
+#' lantern shark, \emph{Etmopterus pusillus}, in southern portugal (NE Atlantic). \emph{Fisheries Research}, 86, 42--57.
+#'
+"Epusillus"

@@ -16,9 +16,9 @@ Predicted length-at-age.
 }
 \description{
 \code{vb_lengths} returns the predicted length-at-age for given named set of parameters for the von Bertalanffy growth function:
-\deqn{L=L_{\infty}(1-e^{-k(A-t_0)})}
+\deqn{l = L_{\infty} (1 - e^{-k(a - t_0)})}
 }
 \examples{
-vb_lengths(theta=c("linf"=30,"k"=0.2,"t0"=-1), age=0:10)
+vb_lengths(theta = c("linf" = 30,"k" = 0.2,"t0" = -1), age = 0:10)
 }
 

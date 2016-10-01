@@ -17,15 +17,19 @@ vb_bind_nll(theta, binding, data, distribution)
 }
 \value{
 Complete data negative log-likelihood:
+}
+\description{
+\code{vb_bind_nll} returns the negative log-likelihood for the von Bertalanffy model. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument.
+}
+\examples{
 ## Unconstrained model
 binding <- matrix(c(1:8), ncol = 2, byrow = TRUE)
 rownames(binding) <- c("lnlinf", "lnk", "lnnt0", "lnsigma")
 colnames(binding) <- c("female", "male")
 ## starting values
 start.par <- c(rep(log(25), 2), rep(log(0.2), 2), rep(log(3), 2), rep(log(1), 2))
-vb_bind_nll(theta = start.par, binding = binding, data = data.frame(age = rep(1, 2), length = rep(10, 2), weights = c(1, 0)), distribution = "normal")
-}
-\description{
-\code{vb_bind_nll} returns the negative log-likelihood for the von Bertalanffy model. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument.
+vb_bind_nll(theta = start.par, binding = binding,
+            data = data.frame(age = rep(1, 2), length = rep(10, 2), weights = c(1, 0)),
+            distribution = "normal")
 }
 
