@@ -6,7 +6,7 @@
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
 #' @param abstol Tolerance for EM observed data log likelihood convergence (1e-8 default).
-#' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male.
+#' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param optim.method Character, complete data optimisation method to use in \code{optim}.
 #' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.
@@ -34,15 +34,13 @@
 #' ## starting values 
 #' start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1), 2))
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
-#' ## Don't ask for each iteration plot
-#' options(device.ask.default = FALSE)
 #' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
 #'                              binding = binding, distribution = "lognormal",
 #'                              abstol = 1e-6)
 #' options(device.ask.default = TRUE)
 #'
 
-vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = TRUE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
+vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
   if(!"mixprop" %in% names(start.list[["par"]])){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.list list")
