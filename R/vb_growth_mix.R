@@ -5,7 +5,7 @@
 #' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "immature".
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
-#' @param abstol Tolerance for EM observed data log likelihood convergence (1e-8 default).
+#' @param reltol Relative tolerance for EM observed data log likelihood convergence (1e-10 default).
 #' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param optim.method Character, complete data optimisation method to use in \code{optim}.
@@ -36,10 +36,10 @@
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
 #' vb.bind.fit <- vb_growth_mix(data = sim.dat, start.list = start.list,
 #'                              binding = binding, distribution = "lognormal",
-#'                              abstol = 1e-6)
+#'                              reltol = 1e-6)
 #'
 
-vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
+vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
   if(!"mixprop" %in% names(start.list[["par"]])){
     stop("No starting value for mixing proportion provided, specify 'mixprop = value' in start.list list")
@@ -151,10 +151,9 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 
       mixprop <- sum(complete.data$tau)/length(complete.data$tau)
     }
     par[["mixprop"]] <- mixprop
-    ## GROWTH MODEL - USE NLMINB AS BFGS FLIPPING OUT OCCASSIONALLY, SEEMS FASTER ALSO
+    ## GROWTH MODEL
     complete.data$weights <- complete.data$tau
     vb_fit <- optim(vb_bind_nll, par = growth.par, gr = vb_bind_gr, binding = binding, data = complete.data, method = optim.method, distribution = distribution)
-    ##vb_fit <- nlminb(objective = vb_bind_nll, start = growth.par, gradient = vb_bind_gr, binding = binding, data = complete.data, distribution = distribution)
     par[["growth.par"]] <- vb_fit$par
     ##--------
     ## OUTPUT
@@ -164,7 +163,8 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 
     }
     ## CONVERGENCE
     if(i>2){
-      if(abs(ollike[i] - ollike[i-1]) <  abstol | i == maxiter.em){
+      ##if(abs(ollike[i] - ollike[i-1]) <  abstol | i == maxiter.em){
+      if(abs(ollike[i] - ollike[i-1]) <  abs(ollike[i-1] * reltol) | i == maxiter.em){
         ## STANDARD ERRORS
         ## one fit of observed data log-likelihood
         oll <- function(theta, estimate.mixprop, distribution){
@@ -252,6 +252,6 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, abstol = 
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","abstol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "binding", "optim.method", "estimate.mixprop", "distribution", "female_growth_fit", "male_growth_fit")])
+    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","reltol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "binding", "optim.method", "estimate.mixprop", "distribution", "female_growth_fit", "male_growth_fit")])
   }
 }
