@@ -12,7 +12,7 @@
 #' A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.  
 #' @param mat_parM Named ("A50", "MR") numeric vector with male maturation parameters.
 #' @param distribution Character with options: "normal" or "lognormal".
-#' @return data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals unclassified), "maturiy" (binary: 1 if mature; 0 if immature).
+#' @return data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturiy" (binary: 1 if mature; 0 if immature).
 #' @examples
 #' sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
 #'                      growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 0.1),
@@ -22,7 +22,7 @@
 #' 
 #' plot(jitter(sim.dat$age), sim.dat$length,
 #'      xlim=c(0, max(sim.dat$age)), ylim=c(0, max(sim.dat$length)),
-#'      col = c("red", "blue", "grey")[match(sim.dat$obs.sex,c("female", "male", "immature"))],
+#'      col = c("red", "blue", "grey")[match(sim.dat$obs.sex,c("female", "male", "unclassified"))],
 #'      pch = 19, xlab="age", ylab="Length")
 
 sim_vb_data<-function(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM, mat_parF, mat_parM, distribution){
@@ -51,7 +51,7 @@ sim_vb_data<-function(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_
   mat <- c(matF, matM)
   ## true and observed sexes
   true.sex <- rep(c("female","male"), times = c(nfemale, nmale))
-  obs.sex <- ifelse(mat == 1, true.sex, "immature")
+  obs.sex <- ifelse(mat == 1, true.sex, "unclassified")
   ##
   df <- data.frame(age = age.vec, length = length.vec, true.sex = true.sex, obs.sex = obs.sex, maturity = mat)
   return(df)
