@@ -2,11 +2,11 @@
 #'
 #' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimization is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
 #' @param start.list A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
-#' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "immature".
+#' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "unclassified".
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
 #' @param reltol Relative tolerance for EM observed data log likelihood convergence (1e-10 default).
-#' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Immature / unsexed animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
+#' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Unclassified animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param optim.method Character, complete data optimisation method to use in \code{optim}.
 #' @param estimate.mixprop Logical, if TRUE the mixing proportion is estimated, otherwise fixed at the starting value.
@@ -59,7 +59,7 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
   }
   ## split the data 
   classified.data <- data[data$obs.sex %in% c("female", "male"), ]
-  unclassified.data <- data[data$obs.sex == "immature", ]
+  unclassified.data <- data[data$obs.sex == "unclassified", ]
   ## define growth functions
   female_growth_fit <- function(x){linfF * (1 - exp(-kF * (x - t0F)))}
   male_growth_fit <- function(x){linfM * (1 - exp(-kM * (x - t0M)))}
@@ -98,7 +98,7 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
     ##-----------------------------
     ## FILL IN OBSERVED LIKELIHOOD 
     ##-----------------------------
-    ## NOTE: IF ONLY INCLUDING IMMATURE IN MIXPROP CALCULATION OMIT MIXPROP FROM CLASSIFIED
+    ## NOTE: IF ONLY INCLUDING UNCLASSIFIED IN MIXPROP CALCULATION OMIT MIXPROP FROM CLASSIFIED
     if(distribution == "normal"){
       ll.F.class <- sum(classified.data$obs.sex == "female") * log(mixprop) +
         sum(dnorm(classified.data$length, mean = muF.class, sd = sigmaF, log=TRUE)[classified.data$obs.sex == "female"])
@@ -133,7 +133,7 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
       par(mfrow=c(1, 1), mar = c(2, 2, 1, 1), oma = c(2, 2, 1, 1))
       age.pred <- seq(min(complete.data$jitter.age), max(complete.data$jitter.age), length=50)
       plot(complete.data$jitter.age, complete.data$length,
-           pch=ifelse(complete.data$obs.sex=="immature",17, 19),
+           pch=ifelse(complete.data$obs.sex=="unclassified",17, 19),
            col=paste(tau.col,40, sep=""),
            ylim=c(0, max(complete.data$length)),
            xlim=c(0, max(complete.data$jitter.age)),
