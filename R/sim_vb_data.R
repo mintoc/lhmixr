@@ -21,9 +21,9 @@
 #'                      distribution = "lognormal")
 #' 
 #' plot(jitter(sim.dat$age), sim.dat$length,
-#'      xlim=c(0, max(sim.dat$age)), ylim=c(0, max(sim.dat$length)),
-#'      col = c("red", "blue", "grey")[match(sim.dat$obs.sex,c("female", "male", "unclassified"))],
-#'      pch = 19, xlab="age", ylab="Length")
+#'      xlim=c(0, max(sim.dat$age)), ylim = c(0, max(sim.dat$length)),
+#'      col = c("red", "blue", "grey")[match(sim.dat$obs.sex, c("female", "male", "unclassified"))],
+#'      pch = 19, xlab = "age", ylab = "Length")
 
 sim_vb_data<-function(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM, mat_parF, mat_parM, distribution){
   ## female ages

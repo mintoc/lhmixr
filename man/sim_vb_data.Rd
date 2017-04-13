@@ -42,7 +42,7 @@ sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
                      distribution = "lognormal")
 
 plot(jitter(sim.dat$age), sim.dat$length,
-     xlim=c(0, max(sim.dat$age)), ylim=c(0, max(sim.dat$length)),
-     col = c("red", "blue", "grey")[match(sim.dat$obs.sex,c("female", "male", "unclassified"))],
-     pch = 19, xlab="age", ylab="Length")
+     xlim=c(0, max(sim.dat$age)), ylim = c(0, max(sim.dat$length)),
+     col = c("red", "blue", "grey")[match(sim.dat$obs.sex, c("female", "male", "unclassified"))],
+     pch = 19, xlab = "age", ylab = "Length")
 }
