@@ -3,7 +3,7 @@
 #' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimization is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
 #' @param start.list A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
 #' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "unclassified".
-#' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
+#' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for male parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
 #' @param reltol Relative tolerance for EM observed data log likelihood convergence (1e-10 default).
 #' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Unclassified animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
@@ -18,6 +18,8 @@
 #' \item{coefficients}{Parameter estimates (on the real line) and associated standard errors on the real line.}
 #' \item{vcov}{Estimated variance covariance matrix of the parameters estimated on the real line. Can be used to obtain parameter standard errors on the natural scale.}
 #' \item{convergence}{Binary with a "0" denoting convergence of the EM algorithm.}
+#' @source Minto, C., Hinde, J. and Coelho, R. (2017). Including unsexed individuals in sex-specific growth models.
+#' \emph{Canadian Journal of Fisheries and Aquatic Sciences}. DOI: 10.1139/cjfas-2016-0450.
 #' @examples
 #' set.seed(1010)
 #' sim.dat <- sim_vb_data(nfemale = 50, nmale = 50, mean_ageF = 4, mean_ageM = 4,
@@ -38,6 +40,9 @@
 #'                              binding = binding, distribution = "lognormal",
 #'                              reltol = 1e-6)
 #'
+#' @importFrom grDevices colorRampPalette
+#' @importFrom graphics lines mtext plot
+#' @importFrom stats dlnorm dnorm optim plogis qlogis rbinom rlnorm rnbinom rnorm
 
 vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
@@ -46,7 +51,7 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
   }
   ## check length of the starting parameters
   if(max(binding) != length(start.list[["par"]][["growth.par"]])){
-    stop("Mis-match in the length of growth.par and that specified by binding.")
+    stop("Mismatch in the length of growth.par and that specified by binding.")
   }
   ## observed log-likelihood container
   ollike <- rep(NA, maxiter.em)

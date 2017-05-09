@@ -1,1 +1,9 @@
 ^data-raw$
+lhmixr\.pdf
+^\.git$
+^.*\.Rproj$
+\~
+\.gitignore
+^README\.Rmd$
+^NEWS\.md$
+\.Rhistory

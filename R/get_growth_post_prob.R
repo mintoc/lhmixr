@@ -12,6 +12,8 @@
 #' @param data A data.frame with column "length". Note predicted means "muF" and "muM" must come from corresponding ages.
 #' @param distribution Character with options: "normal" or "lognormal".
 #' @return Numeric vector of the posterior probability of being female.
+#' @source Minto, C., Hinde, J. and Coelho, R. (2017). Including unsexed individuals in sex-specific growth models.
+#' \emph{Canadian Journal of Fisheries and Aquatic Sciences}. DOI: 10.1139/cjfas-2016-0450.
 #' @examples
 #' get_growth_post_prob(mixprop = 0.5, muF = 4, muM = 6, sigmaF = 1,
 #'                           sigmaM = 1, data = data.frame(length = 4.5), distribution = "normal")

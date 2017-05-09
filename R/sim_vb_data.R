@@ -12,7 +12,7 @@
 #' A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.  
 #' @param mat_parM Named ("A50", "MR") numeric vector with male maturation parameters.
 #' @param distribution Character with options: "normal" or "lognormal".
-#' @return data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturiy" (binary: 1 if mature; 0 if immature).
+#' @return data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturity" (binary: 1 if mature; 0 if immature).
 #' @examples
 #' sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
 #'                      growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 0.1),

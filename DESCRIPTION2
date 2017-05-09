@@ -10,8 +10,8 @@ Author: Coilin Minto [aut, cre], John Hinde [aut], Rui Coelho [ctb, dtc]
 Maintainer: Coilin Minto <coilin.minto@gmit.ie>
 Description: lhmixr fits sex-specific life-history models for fish and other taxa where some of the individuals have unknown sex.
 Depends: R (>= 3.2.0)
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 URL: https://github.com/mintoc/lhmixr
 BugReports: https://github.com/mintoc/lhmixr/issues
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.0

@@ -28,7 +28,7 @@ A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.
 \item{distribution}{Character with options: "normal" or "lognormal".}
 }
 \value{
-data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturiy" (binary: 1 if mature; 0 if immature).
+data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturity" (binary: 1 if mature; 0 if immature).
 }
 \description{
 \code{sim_vb_data} simulates sex-specific growth data according to

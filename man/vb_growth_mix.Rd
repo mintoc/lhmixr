@@ -3,6 +3,10 @@
 \name{vb_growth_mix}
 \alias{vb_growth_mix}
 \title{Fit finite mixture von Bertalanffy growth model.}
+\source{
+Minto, C., Hinde, J. and Coelho, R. (2017). Including unsexed individuals in sex-specific growth models.
+\emph{Canadian Journal of Fisheries and Aquatic Sciences}. DOI: 10.1139/cjfas-2016-0450.
+}
 \usage{
 vb_growth_mix(start.list, data, binding, maxiter.em = 1000, reltol = 1e-08,
   plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS",
@@ -13,7 +17,7 @@ vb_growth_mix(start.list, data, binding, maxiter.em = 1000, reltol = 1e-08,
 
 \item{data}{A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "unclassified".}
 
-\item{binding}{A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for mal parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).}
+\item{binding}{A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for male parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).}
 
 \item{maxiter.em}{Integer for maximum number of EM iterations (1e3 default).}
 

@@ -3,6 +3,10 @@
 \name{get_growth_post_prob}
 \alias{get_growth_post_prob}
 \title{Posterior probability of sex being female based on growth alone}
+\source{
+Minto, C., Hinde, J. and Coelho, R. (2017). Including unsexed individuals in sex-specific growth models.
+\emph{Canadian Journal of Fisheries and Aquatic Sciences}. DOI: 10.1139/cjfas-2016-0450.
+}
 \usage{
 get_growth_post_prob(mixprop, muF, muM, sigmaF, sigmaM, data, distribution)
 }

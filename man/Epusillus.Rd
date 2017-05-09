@@ -13,8 +13,8 @@
 \item{\code{maturity}}{Maturation status: \code{immature} or \code{mature}}
 }}
 \source{
-Coelho, R. & Erzini, K. (2007). Population parameters of the smooth
-lantern shark, \emph{Etmopterus pusillus}, in southern portugal (NE Atlantic). \emph{Fisheries Research}, 86, 42--57.
+Coelho, R. and Erzini, K. (2007). Population parameters of the smooth
+lantern shark, \emph{Etmopterus pusillus}, in southern Portugal (NE Atlantic). \emph{Fisheries Research}, 86, 42--57.
 }
 \usage{
 Epusillus
