@@ -16,6 +16,7 @@
 #' vb_bind_gr(theta = start.par, binding = binding,
 #'            data = data.frame(age = rep(1, 2), length = rep(10, 2), weights = c(1, 0)),
 #'            distribution = "lognormal")
+#' @export
 
 vb_bind_gr <- function(theta, binding, data, distribution){
   lnlinfF <- theta[binding["lnlinf", "female"]]
@@ -71,6 +72,5 @@ vb_bind_gr <- function(theta, binding, data, distribution){
                        )
   }
   ## gradients should be summed across bound parameters
-  ##return(all.gradients[sort(unique(c(binding)))])
   return(tapply(all.gradients, c(t(binding)), sum))
 }

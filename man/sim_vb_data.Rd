@@ -12,20 +12,20 @@ sim_vb_data(nfemale, nmale, mean_ageF, mean_ageM, growth_parF, growth_parM,
 
 \item{nmale}{Numeric scalar for number of male observations.}
 
-\item{mean_ageF}{Numeric scalar for female mean age - used to generate ages from rnbinom(,mu = mean_ageF)}
+\item{mean_ageF}{Numeric scalar for female mean age - used to generate ages from \code{rnbinom(, mu = mean_ageF)}}
 
-\item{mean_ageM}{Numeric scalar for male mean age - used to generate ages from rnbinom(, mu = mean_ageM)}
+\item{mean_ageM}{Numeric scalar for male mean age - used to generate ages from \code{rnbinom(, mu = mean_ageM)}}
 
 \item{growth_parF}{Named ("linf", "k", "t0", "sigma") numeric vector with female growth parameters}
 
 \item{growth_parM}{Named ("linf", "k", "t0", "sigma") numeric vector with male growth parameters}
 
 \item{mat_parF}{Named ("A50", "MR") numeric vector with female maturation parameters
-A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% maturity.}
+A50 is the age at 50\% maturity, MR is age range between 25\% and 75\% mature.}
 
 \item{mat_parM}{Named ("A50", "MR") numeric vector with male maturation parameters.}
 
-\item{distribution}{Character with options: "normal" or "lognormal".}
+\item{distribution}{Character with options: "normal" or "lognormal" for simulated length-at-age distributon.}
 }
 \value{
 data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex assuming immature animals are unclassified), "maturity" (binary: 1 if mature; 0 if immature).
@@ -35,11 +35,11 @@ data.frame with columns "age", "length", "true.sex", "obs.sex" (observed sex ass
 the von Bertalanffy growth model and a logistic model governing maturity.
 }
 \examples{
-sim.dat<-sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
-                     growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 0.1),
-                     growth_parM = c(linf = 25, k = 0.2, t0 = -1, sigma = 0.1),
-                     mat_parF = c(A50 = 3, MR = 1), mat_parM = c(A50 = 2, MR = 1),
-                     distribution = "lognormal")
+sim.dat <- sim_vb_data(nfemale = 30, nmale = 30, mean_ageF = 3, mean_ageM = 3,
+                       growth_parF = c(linf = 30, k = 0.2, t0 = -1, sigma = 0.1),
+                       growth_parM = c(linf = 25, k = 0.2, t0 = -1, sigma = 0.1),
+                       mat_parF = c(A50 = 3, MR = 1), mat_parM = c(A50 = 2, MR = 1),
+                       distribution = "lognormal")
 
 plot(jitter(sim.dat$age), sim.dat$length,
      xlim=c(0, max(sim.dat$age)), ylim = c(0, max(sim.dat$length)),

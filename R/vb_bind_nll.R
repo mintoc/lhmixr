@@ -16,6 +16,7 @@
 #' vb_bind_nll(theta = start.par, binding = binding,
 #'             data = data.frame(age = rep(1, 2), length = rep(10, 2), weights = c(1, 0)),
 #'             distribution = "normal")
+#' @export
 
 vb_bind_nll <- function(theta, binding, data, distribution) {
   linfF <- exp(theta[binding["lnlinf", "female"]])

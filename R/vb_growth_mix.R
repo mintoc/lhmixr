@@ -1,11 +1,11 @@
 #' @title Fit finite mixture von Bertalanffy growth model.
 #'
-#' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimization is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
+#' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
 #' @param start.list A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
 #' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "unclassified".
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for male parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  
 #' @param maxiter.em Integer for maximum number of EM iterations (1e3 default).
-#' @param reltol Relative tolerance for EM observed data log likelihood convergence (1e-10 default).
+#' @param reltol Relative tolerance for EM observed data log likelihood convergence (1e-8 default).
 #' @param plot.fit Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Unclassified animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).
 #' @param verbose Logical, if TRUE iteration and observed data log-likelihood printed.
 #' @param optim.method Character, complete data optimisation method to use in \code{optim}.
@@ -33,6 +33,7 @@
 #' binding <- matrix(c(1:2, rep(3, 2), 4:7), ncol = 2, byrow = TRUE)
 #' rownames(binding) <- c("lnlinf", "lnk", "lnnt0", "lnsigma")
 #' colnames(binding) <- c("female", "male")
+#' ## note: lnnt0 is the natural logarithm of the negative of t0 (t0 < 0)
 #' ## starting values 
 #' start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1), 2))
 #' start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))
@@ -43,6 +44,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom graphics lines mtext plot
 #' @importFrom stats dlnorm dnorm optim plogis qlogis rbinom rlnorm rnbinom rnorm
+#' @export
 
 vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 1e-8, plot.fit = FALSE, verbose = TRUE, optim.method = "BFGS", estimate.mixprop = TRUE, distribution){
   ## check mixprop starting values
@@ -133,7 +135,6 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
     ## PLOT
     ##------
     if(plot.fit){
-      ##par(ask  = FALSE) ## so example runs through
       tau.col <- col.vec[cut(complete.data$tau, breaks)]
       par(mfrow=c(1, 1), mar = c(2, 2, 1, 1), oma = c(2, 2, 1, 1))
       age.pred <- seq(min(complete.data$jitter.age), max(complete.data$jitter.age), length=50)
@@ -168,7 +169,6 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
     }
     ## CONVERGENCE
     if(i>2){
-      ##if(abs(ollike[i] - ollike[i-1]) <  abstol | i == maxiter.em){
       if(abs(ollike[i] - ollike[i-1]) <  abs(ollike[i-1] * reltol) | i == maxiter.em){
         ## STANDARD ERRORS
         ## one fit of observed data log-likelihood
@@ -221,13 +221,12 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
           oll <- ll.F.class + ll.M.class + ll.miss
           return(-oll)
         }
-        ## INCLUDE GRADIENTS HERE ALSO
+        ## 
         if(estimate.mixprop){
           oll.fit <- optim(fn = oll, par = c(par[["growth.par"]], qlogis(mixprop)), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = TRUE, distribution = distribution, method = optim.method)
         }else{
           oll.fit <- optim(fn = oll, par = c(par[["growth.par"]]), hessian = TRUE, control = list(maxit = 1e4),  estimate.mixprop = FALSE, distribution = distribution, method = optim.method)
         }
-        ##print(oll.fit$par)
         ## check to make sure final optim fit close to EM
         if(!(round(-oll.fit$value / ollike[i], 4) == 1)){
           warning(paste("EM solution and optim solution differ by ", -oll.fit$value - ollike[i], ", final parameter values may differ from final EM values.", sep = ""))
@@ -257,6 +256,6 @@ vb_growth_mix <- function(start.list, data, binding, maxiter.em = 1e3, reltol = 
       }
     }
     ## clean-up within iteration
-    rm(list = ls()[!ls()%in%c("classified.data", "unclassified.data","maxiter.em","par", "ollike","reltol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "binding", "optim.method", "estimate.mixprop", "distribution", "female_growth_fit", "male_growth_fit")])
+    rm(list = ls()[!ls() %in% c("classified.data", "unclassified.data","maxiter.em","par", "ollike","reltol","plot.fit", "col.vec", "breaks", "verbose", "vb_bind_nll", "binding", "optim.method", "estimate.mixprop", "distribution", "female_growth_fit", "male_growth_fit")])
   }
 }

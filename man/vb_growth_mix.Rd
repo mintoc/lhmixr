@@ -21,7 +21,7 @@ vb_growth_mix(start.list, data, binding, maxiter.em = 1000, reltol = 1e-08,
 
 \item{maxiter.em}{Integer for maximum number of EM iterations (1e3 default).}
 
-\item{reltol}{Relative tolerance for EM observed data log likelihood convergence (1e-10 default).}
+\item{reltol}{Relative tolerance for EM observed data log likelihood convergence (1e-8 default).}
 
 \item{plot.fit}{Logical, if TRUE fit plotted per iteration. Red and blue circles are used for known females and males, respectively. Unclassified animals are plotted as triangle with the colour indicating the expected probability of being female or male (FALSE default).}
 
@@ -43,7 +43,7 @@ List containing the components:
 \item{convergence}{Binary with a "0" denoting convergence of the EM algorithm.}
 }
 \description{
-\code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimization is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
+\code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
 }
 \examples{
 set.seed(1010)
@@ -58,6 +58,7 @@ sim.dat <- sim_vb_data(nfemale = 50, nmale = 50, mean_ageF = 4, mean_ageM = 4,
 binding <- matrix(c(1:2, rep(3, 2), 4:7), ncol = 2, byrow = TRUE)
 rownames(binding) <- c("lnlinf", "lnk", "lnnt0", "lnsigma")
 colnames(binding) <- c("female", "male")
+## note: lnnt0 is the natural logarithm of the negative of t0 (t0 < 0)
 ## starting values 
 start.par <- c(c(log(30), log(25)), rep(log(0.3), 1), rep(log(1), 2), rep(log(.1), 2))
 start.list <- list(par = list(mixprop = 0.5, growth.par = start.par))

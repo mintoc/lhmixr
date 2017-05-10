@@ -8,6 +8,8 @@
 #' @return Predicted length-at-age.
 #' @examples
 #' vb_lengths(theta = c("linf" = 30,"k" = 0.2,"t0" = -1), age = 0:10)
+#' @export
+
 vb_lengths <- function(theta, age) {
  pred_length <- theta["linf"] * (1 - exp(-theta["k"] * (age - theta["t0"])))
  return(pred_length)

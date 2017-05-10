@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_growth_post_prob.R
 \name{get_growth_post_prob}
 \alias{get_growth_post_prob}
-\title{Posterior probability of sex being female based on growth alone}
+\title{Posterior probability of sex being female based on growth}
 \source{
 Minto, C., Hinde, J. and Coelho, R. (2017). Including unsexed individuals in sex-specific growth models.
 \emph{Canadian Journal of Fisheries and Aquatic Sciences}. DOI: 10.1139/cjfas-2016-0450.
@@ -30,8 +30,8 @@ Numeric vector of the posterior probability of being female.
 }
 \description{
 \code{get_growth_post_prob} returns the probability of
-the observation(s) arising from the female component given a set of parameters
-and an assumed distribution (normal currently). The component probability is
+the observation(s) arising from the female component given a set of growth parameters
+and an assumed distribution (normal or lognormal). The component probability is
 given by Bayes' theorem. Used internally.
 }
 \examples{
