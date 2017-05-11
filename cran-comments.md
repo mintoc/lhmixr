@@ -9,6 +9,6 @@ There were no ERRORs or WARNINGs.
 There was 1 NOTE:
 
 * checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Coilin Minto <coilin.minto@gmit.ie>'
+Maintainer: 'Coilin Minto <coilin.minto[at]gmit.ie>'
 
 New submission
