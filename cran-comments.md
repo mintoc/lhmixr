@@ -1,8 +1,9 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* Removed the '+ file LICENSE' from the DESCRIPTION
-* Removed the LICENSE file, as using standard GPL (>=3)
+* Fixed: The Title field should be in title case, current version then in title case:
+'Fit Sex-Specific Life History Models With Missing Classifications'
+'Fit Sex-Specific Life History Models with Missing Classification
 
 ## Test environments
 * local Ubuntu 16.04.2 LTS R version 3.4.0 (2017-04-21)
