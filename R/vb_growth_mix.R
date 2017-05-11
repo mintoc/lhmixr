@@ -1,6 +1,6 @@
 #' @title Fit finite mixture von Bertalanffy growth model.
 #'
-#' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
+#' @description \code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument.
 #' @param start.list A list with a list called par containing starting values for: "mixprop", "growth.par" (see Examples).
 #' @param data A data.frame with columns: "age", "length" and "obs.sex". "obs.sex" must have values "female", "male", "unclassified".
 #' @param binding A (4x2) parameter index matrix with rows named (in order): "lnlinf", "lnk", "lnnt0", "lnsigma" and the left column for the female parameter index and right column for male parameter index. Used to impose arbitrary equality constraints across the sexes (see Examples).  

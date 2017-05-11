@@ -4,6 +4,7 @@
 \~
 \.gitignore
 README\.md
-^NEWS\.md$
+NEWS\.md
+cran-comments\.md
 \.Rhistory
 \.travis\.yml

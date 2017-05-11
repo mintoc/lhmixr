@@ -43,7 +43,7 @@ List containing the components:
 \item{convergence}{Binary with a "0" denoting convergence of the EM algorithm.}
 }
 \description{
-\code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument. Assumes a normal distribution currently.
+\code{vb_growth_mix} fits sex-specific growth models where some of the animals are of unknown sex. Optimisation is via the Expectation-Maximisation algorithm. Equality constraints across sexes can be implemented for any combination of parameters using the \code{binding} argument.
 }
 \examples{
 set.seed(1010)
