@@ -1,6 +1,6 @@
 Package: lhmixr
 Title: Fit Sex-Specific Life History Models with Missing Classifications
-Version: 0.1.0
+Version: 0.1.0.9000
 Date: 2017-05-09
 Authors@R: c(
 	   person("Coilin", "Minto", email = "coilin.minto@gmit.ie", role = c("aut", "cre")),
